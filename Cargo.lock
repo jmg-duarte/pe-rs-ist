@@ -668,6 +668,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "pe-rs-ist"
+version = "0.1.0"
+dependencies = [
+ "egg-mode",
+ "serde",
+ "tokio",
+ "toml",
+]
+
+[[package]]
 name = "percent-encoding"
 version = "2.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1107,16 +1117,6 @@ name = "try-lock"
 version = "0.2.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "59547bce71d9c38b83d9c0e92b6066c4253371f15005def0c30d9657f50c7642"
-
-[[package]]
-name = "twithesis"
-version = "0.1.0"
-dependencies = [
- "egg-mode",
- "serde",
- "tokio",
- "toml",
-]
 
 [[package]]
 name = "typenum"

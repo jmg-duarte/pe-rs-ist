@@ -1,5 +1,5 @@
 [package]
-name = "twithesis"
+name = "pe-rs-ist"
 version = "0.1.0"
 authors = ["José Duarte <jmg.duarte@campus.fct.unl.pt>"]
 edition = "2018"
