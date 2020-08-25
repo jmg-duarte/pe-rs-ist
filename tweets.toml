@@ -1,0 +1,7 @@
+[[tweet]]
+message = "{count} Test #0"
+interval = 10
+
+[[tweet]]
+message = "{count} Test #1"
+interval = 5
