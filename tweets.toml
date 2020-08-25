@@ -5,3 +5,4 @@ interval = 10
 [[tweet]]
 message = "{count} Test #1"
 interval = 5
+counter = 100

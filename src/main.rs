@@ -32,7 +32,7 @@ async fn main() -> Result {
     let token = Arc::new(auth_conf.token());
 
     let mut handlers = Vec::new();
-    for t in tweets.tweet {
+    for mut t in tweets.tweet {
         let arc_tok = Arc::clone(&token);
         handlers.push(tokio::spawn(async move {
             let _ = t.send(arc_tok).await;
