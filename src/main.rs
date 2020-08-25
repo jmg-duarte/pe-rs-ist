@@ -1,38 +1,15 @@
+mod auth;
+
 use std::fs;
 
 use egg_mode::tweet::DraftTweet;
-use egg_mode::KeyPair;
-use serde::Deserialize;
 use tokio;
 use tokio::time;
 use toml;
 
+use auth::AuthConfig;
+
 const AUTH_CONF: &'static str = "auth.toml";
-
-#[derive(Deserialize, Debug)]
-#[serde(rename_all = "UPPERCASE")]
-struct AuthConfig {
-    api_key: String,
-    api_key_secret: String,
-    bearer_token: String,
-    access_token: String,
-    access_token_secret: String,
-}
-
-impl AuthConfig {
-    fn api_token(&self) -> KeyPair {
-        KeyPair::new(self.api_key.clone(), self.api_key_secret.clone())
-    }
-    fn access_token(&self) -> KeyPair {
-        KeyPair::new(self.access_token.clone(), self.access_token_secret.clone())
-    }
-    fn token(&self) -> egg_mode::Token {
-        egg_mode::Token::Access {
-            consumer: self.api_token(),
-            access: self.access_token(),
-        }
-    }
-}
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -50,5 +27,4 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         tweet.send(&token).await?;
         days += 1;
     }
-    Ok(())
 }
