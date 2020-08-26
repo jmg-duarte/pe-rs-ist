@@ -1,5 +1,9 @@
+mod tweet;
+
 use wasm_bindgen::prelude::*;
 use yew::prelude::*;
+
+use tweet::{Tweet, Props};
 
 struct Model {
     link: ComponentLink<Self>,
@@ -39,6 +43,7 @@ impl Component for Model {
             <div>
                 <button onclick=self.link.callback(|_| Msg::AddOne)>{ "+1" }</button>
                 <p>{ self.value }</p>
+                <Tweet message="test"/>
             </div>
         }
     }
