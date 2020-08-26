@@ -32,10 +32,7 @@ impl Tweet {
                     .replace("{count}", self.counter.to_string().as_str()),
             );
             interval.tick().await;
-            #[cfg(not(debug_assertions))]
             draft.send(&*token).await?;
-            #[cfg(debug_assertions)]
-            println!("{:?}", draft);
             self.counter += 1;
         }
         Ok(())

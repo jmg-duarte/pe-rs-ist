@@ -43,26 +43,3 @@ async fn main() -> Result {
     }
     Ok(())
 }
-
-async fn send_one(token: Arc<Token>, tweet: Tweet) -> Result {
-    // if interval == 0 then only once
-    let mut interval = interval(Duration::from_secs(tweet.interval));
-    for _ in 0u8..=5 {
-        interval.tick().await;
-        let draft = DraftTweet::new(tweet.message.to_owned());
-        draft.send(&*token).await?;
-        println!("{:?}", draft);
-    }
-    Ok(())
-}
-
-async fn launch(token: &Token) -> Result {
-    let mut interval = interval(Duration::from_secs(86400));
-    let mut days: u64 = 0;
-    loop {
-        interval.tick().await;
-        let tweet = DraftTweet::new(format!("{} days complaining.", days));
-        tweet.send(&token).await?;
-        days += 1;
-    }
-}
