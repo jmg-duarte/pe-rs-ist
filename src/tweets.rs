@@ -3,7 +3,7 @@ use std::sync::Arc;
 use egg_mode::{auth::Token, tweet::DraftTweet};
 
 use serde::Deserialize;
-use tokio::time::{interval, Duration, Interval};
+use tokio::time::{interval, Duration};
 
 #[derive(Deserialize, Debug)]
 pub struct Config {

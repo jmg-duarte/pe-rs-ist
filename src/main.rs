@@ -2,16 +2,13 @@ mod auth;
 mod tweets;
 
 use std::fs;
-use std::rc::Rc;
 use std::sync::Arc;
 
-use egg_mode::{auth::Token, tweet::DraftTweet};
 use tokio;
-use tokio::time::{interval, Duration, Interval};
 use toml;
 
 use auth::AuthConfig;
-use tweets::{Config, Tweet};
+use tweets::Config;
 
 const AUTH_CONF: &'static str = "auth.toml";
 const TWEET_FILE: &'static str = "tweets.toml";
