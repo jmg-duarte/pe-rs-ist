@@ -33,9 +33,10 @@ impl Tweet {
             );
             interval.tick().await;
             draft.send(&*token).await?;
+            // println!("{:?}", draft);
             self.counter += 1;
         }
-        Ok(())
+        // Ok(())
     }
 
     fn default_counter() -> u64 {
