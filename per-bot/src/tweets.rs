@@ -15,7 +15,7 @@ pub struct Tweet {
     pub message: String,
     /// The interval is in seconds
     pub interval: u64,
-    #[serde(default="Tweet::default_counter")]
+    #[serde(default = "Tweet::default_counter")]
     pub counter: u64,
 }
 
@@ -41,6 +41,4 @@ impl Tweet {
     fn default_counter() -> u64 {
         0
     }
-    
 }
-
