@@ -1,29 +1,31 @@
 mod auth;
 mod tweets;
+mod opts;
 
 use std::fs;
 use std::sync::Arc;
 
 use tokio;
 use toml;
+use clap::Clap;
 
 use auth::AuthConfig;
 use tweets::Config;
-
-const AUTH_CONF: &'static str = "auth.toml";
-const TWEET_FILE: &'static str = "tweets.toml";
+use opts::*;
 
 type Result = std::result::Result<(), Box<dyn std::error::Error>>;
 
 #[tokio::main]
 async fn main() -> Result {
-    let tweet_file = fs::read(TWEET_FILE).expect("Error while reading the tweet file");
+    let opts = Options::parse();
+
+    let tweet_file = fs::read(opts.tweet_list).expect("Error while reading the tweet file");
     let tweets: Config =
         toml::from_slice(tweet_file.as_slice()).expect("Error while parsing the tweet file");
     println!("{:?}", tweets);
 
     let auth_conf_file =
-        fs::read(AUTH_CONF).expect("Error while reading authentication configuration");
+        fs::read(opts.authentication).expect("Error while reading authentication configuration");
     let auth_conf: AuthConfig = toml::from_slice(auth_conf_file.as_slice())
         .expect("Error while parsing the authentication configuration");
     let token = Arc::new(auth_conf.token());
