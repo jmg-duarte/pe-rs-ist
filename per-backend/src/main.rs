@@ -3,14 +3,23 @@ mod tweet;
 use tweet::{DelTweet, Tweet};
 
 use actix_web::{delete, post, web, App, HttpResponse, HttpServer, Responder};
+use actix_web::middleware::Logger;
+use env_logger::{Env};
 use redis::AsyncCommands;
 
 #[actix_rt::main]
 async fn main() -> std::io::Result<()> {
-    HttpServer::new(|| App::new().service(submit).service(delete))
-        .bind("127.0.0.1:8088")?
-        .run()
-        .await
+    env_logger::from_env(Env::default().default_filter_or("info")).init();
+
+    HttpServer::new(|| {
+        App::new()
+            .wrap(Logger::default())
+            .service(submit)
+            .service(delete)
+    })
+    .bind("127.0.0.1:8088")?
+    .run()
+    .await
 }
 
 #[post("/submit")]
