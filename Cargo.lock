@@ -1642,9 +1642,11 @@ dependencies = [
 name = "pe-rs-ist"
 version = "0.1.0"
 dependencies = [
+ "anyhow",
  "clap",
  "egg-mode",
  "serde",
+ "thiserror",
  "tokio",
  "toml",
 ]
