@@ -1,3 +1,4 @@
+use std::collections::HashSet;
 use std::fs;
 use std::sync::Arc;
 
@@ -16,12 +17,25 @@ pub struct TweetList {
 impl TweetList {
     pub fn load(file_name: String) -> Result<Self> {
         let tweet_file = fs::read(file_name).map_err(BotError::from)?;
-        toml::from_slice(tweet_file.as_slice()).map_err(BotError::from)
+        toml::from_slice(tweet_file.as_slice())
+            .map_err(BotError::from)
+            .and_then(|tl: Self| tl.validate())
+    }
+
+    fn validate(self) -> Result<Self> {
+        let mut hs = HashSet::new();
+        for t in &self.tweet {
+            if !hs.insert(&t.id) {
+                return Err(BotError::DuplicateId);
+            }
+        }
+        Ok(self)
     }
 }
 
 #[derive(Deserialize, Debug, Clone)]
 pub struct Tweet {
+    pub id: String,
     pub message: String,
     /// The interval is in seconds
     pub interval: u64,

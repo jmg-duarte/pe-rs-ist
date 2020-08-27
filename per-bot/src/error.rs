@@ -7,6 +7,8 @@ pub type Result<T> = std::result::Result<T, BotError>;
 
 #[derive(Debug, Error)]
 pub enum BotError {
+    #[error("Tweet list contains duplicate id's")]
+    DuplicateId,
     #[error("Error while reading configuration")]
     Io(#[source] io::Error),
     #[error("Error while parsing the configuration")]
