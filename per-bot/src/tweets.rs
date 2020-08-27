@@ -15,7 +15,7 @@ pub struct TweetList {
 }
 
 impl TweetList {
-    pub fn load(file_name: String) -> Result<Self> {
+    pub fn load(file_name: &str) -> Result<Self> {
         let tweet_file = fs::read(file_name).map_err(BotError::from)?;
         toml::from_slice(tweet_file.as_slice())
             .map_err(BotError::from)
