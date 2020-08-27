@@ -1,3 +1,4 @@
+use std::fs;
 use std::sync::Arc;
 
 use egg_mode::{auth::Token, tweet::DraftTweet};
@@ -6,8 +7,15 @@ use serde::Deserialize;
 use tokio::time::{interval, Duration};
 
 #[derive(Deserialize, Debug)]
-pub struct Config {
+pub struct TweetList {
     pub tweet: Vec<Tweet>,
+}
+
+impl TweetList {
+    pub fn load(file_name: String) -> Self {
+        let tweet_file = fs::read(file_name).expect("Error while reading the tweet file");
+        toml::from_slice(tweet_file.as_slice()).expect("Error while parsing the tweet file")
+    }
 }
 
 #[derive(Deserialize, Debug, Clone)]
