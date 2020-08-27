@@ -1645,6 +1645,7 @@ dependencies = [
  "anyhow",
  "clap",
  "egg-mode",
+ "futures",
  "redis",
  "serde",
  "serde_json",
