@@ -79,14 +79,6 @@ impl Default for Tweet {
     }
 }
 
-impl TryFrom<String> for Tweet {
-    type Error = BotError;
-
-    fn try_from(value: String) -> Result<Self> {
-        serde_json::from_str(&value).map_err(BotError::from)
-    }
-}
-
 impl FromRedisValue for Tweet {
     fn from_redis_value(v: &redis::Value) -> redis::RedisResult<Self> {
         match v {
