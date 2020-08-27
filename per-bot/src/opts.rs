@@ -1,9 +1,9 @@
 use clap::Clap;
 
-const VERSION: &'static str = env!("CARGO_PKG_VERSION");
-const AUTHORS: &'static str = env!("CARGO_PKG_AUTHORS");
+const VERSION: &str = env!("CARGO_PKG_VERSION");
+const AUTHORS: &str = env!("CARGO_PKG_AUTHORS");
 
-const REDIS_URL: &'static str = "redis://0.0.0.0:32768";
+const REDIS_URL: &str = "redis://0.0.0.0:32768";
 
 #[derive(Clap)]
 #[clap(version=VERSION, author=AUTHORS)]
