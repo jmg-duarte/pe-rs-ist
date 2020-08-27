@@ -37,8 +37,10 @@ async fn main() -> Result {
             let _ = t.send(arc_tok).await;
         }));
     }
+
     for h in handlers {
         h.await?;
     }
+
     Ok(())
 }

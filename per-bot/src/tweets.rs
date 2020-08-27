@@ -32,8 +32,8 @@ impl Tweet {
                     .replace("{count}", self.counter.to_string().as_str()),
             );
             interval.tick().await;
-            draft.send(&*token).await?;
-            // println!("{:?}", draft);
+            // draft.send(&*token).await?;
+            println!("{:?}", draft);
             self.counter += 1;
         }
         // Ok(())
