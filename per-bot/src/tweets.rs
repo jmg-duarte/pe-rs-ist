@@ -1,11 +1,15 @@
 use std::collections::HashSet;
 use std::fs;
 use std::sync::Arc;
+use std::convert::TryFrom;
+use std::collections::HashMap;
 
 use egg_mode::{auth::Token, tweet::DraftTweet};
 
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use tokio::time::{interval, Duration};
+
+use redis::FromRedisValue;
 
 use crate::error::{BotError, Result};
 
@@ -33,7 +37,7 @@ impl TweetList {
     }
 }
 
-#[derive(Deserialize, Debug, Clone)]
+#[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct Tweet {
     pub id: String,
     pub message: String,
@@ -61,6 +65,37 @@ impl Tweet {
             self.counter += 1;
         }
         // Ok(())
+    }
+}
+
+impl Default for Tweet {
+    fn default() -> Self {
+        Self {
+            id: "".to_string(),
+            message: "".to_string(),
+            interval: 0,
+            counter: 0,
+        }
+    }
+}
+
+impl TryFrom<String> for Tweet {
+    type Error = BotError;
+
+    fn try_from(value: String) -> Result<Self> {
+        serde_json::from_str(&value).map_err(BotError::from)
+    }
+}
+
+impl FromRedisValue for Tweet {
+    fn from_redis_value(v: &redis::Value) -> redis::RedisResult<Self> {
+        match v {
+            redis::Value::Data(data) => {
+                let result : Self = serde_json::from_slice(data).unwrap();
+                Ok(result)
+            }
+            _ => unimplemented!("{:?}", v),
+        }
     }
 }
 

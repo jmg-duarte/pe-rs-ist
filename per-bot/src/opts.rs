@@ -3,7 +3,7 @@ use clap::Clap;
 const VERSION: &str = env!("CARGO_PKG_VERSION");
 const AUTHORS: &str = env!("CARGO_PKG_AUTHORS");
 
-const REDIS_URL: &str = "redis://0.0.0.0:32768";
+const REDIS_URL: &str = "redis://0.0.0.0:6379";
 
 #[derive(Clap)]
 #[clap(version=VERSION, author=AUTHORS)]
