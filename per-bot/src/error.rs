@@ -13,6 +13,8 @@ pub enum BotError {
     Io(#[source] io::Error),
     #[error("Error while parsing the configuration")]
     Toml(#[source] toml::de::Error),
+    #[error(transparent)]
+    Redis(redis::RedisError)
 }
 
 impl From<io::Error> for BotError {
@@ -24,5 +26,11 @@ impl From<io::Error> for BotError {
 impl From<toml::de::Error> for BotError {
     fn from(e: toml::de::Error) -> Self {
         BotError::Toml(e)
+    }
+}
+
+impl From<redis::RedisError> for BotError {
+    fn from(e: redis::RedisError) -> Self {
+        BotError::Redis(e)
     }
 }
