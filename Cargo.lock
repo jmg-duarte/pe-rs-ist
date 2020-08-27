@@ -1645,6 +1645,7 @@ dependencies = [
  "anyhow",
  "clap",
  "egg-mode",
+ "redis",
  "serde",
  "thiserror",
  "tokio",
