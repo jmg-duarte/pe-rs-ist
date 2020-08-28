@@ -1,8 +1,6 @@
 use std::collections::HashSet;
 use std::fs;
 use std::sync::Arc;
-use std::convert::TryFrom;
-use std::collections::HashMap;
 
 use egg_mode::{auth::Token, tweet::DraftTweet};
 

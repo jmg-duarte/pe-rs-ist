@@ -41,12 +41,15 @@ async fn main() -> Result<()> {
     for q in queries {
         f_tweets.push(q.await?);
     }
-    let tweets: Result<Vec<Tweet>, BotError> = f_tweets
-    .into_iter()
-    .collect();
+
+    let tweets: Vec<Tweet> = f_tweets
+        .into_iter()
+        .collect::<Result<Vec<Tweet>, redis::RedisError>>()
+        .map_err(BotError::from)?;
+    // tweets;
     let auth_conf = AuthConfig::load(opts.authentication)
         .context("Error while reading authentication config")?;
-    init(auth_conf.token(), tweets?).await
+    init(auth_conf.token(), tweets).await
 }
 
 async fn update_redis(opts: &Options) -> Result<()> {
