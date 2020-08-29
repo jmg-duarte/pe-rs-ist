@@ -14,7 +14,7 @@ pub enum BotError {
     #[error("Error while parsing the configuration")]
     Toml(#[source] toml::de::Error),
     #[error(transparent)]
-    Redis(redis::RedisError)
+    Redis(redis::RedisError),
 }
 
 impl From<io::Error> for BotError {

@@ -3,7 +3,7 @@ use std::fs;
 use egg_mode::KeyPair;
 use serde::Deserialize;
 
-use crate::error::{Result, BotError};
+use crate::error::{BotError, Result};
 
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "UPPERCASE")]
