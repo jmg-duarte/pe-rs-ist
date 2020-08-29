@@ -1,11 +1,7 @@
 use std::collections::HashSet;
 use std::fs;
-use std::sync::Arc;
-
-use egg_mode::{auth::Token, tweet::DraftTweet};
 
 use serde::{Deserialize, Serialize};
-use tokio::time::{interval, Duration};
 
 use redis::FromRedisValue;
 
@@ -45,27 +41,6 @@ pub struct Tweet {
     pub counter: u64,
 }
 
-impl Tweet {
-    pub async fn send(
-        &mut self,
-        token: Arc<Token>,
-    ) -> std::result::Result<(), Box<dyn std::error::Error>> {
-        let mut interval = interval(Duration::from_secs(self.interval));
-        loop {
-            let draft = DraftTweet::new(
-                self.message
-                    .to_owned()
-                    .replace("{count}", self.counter.to_string().as_str()),
-            );
-            interval.tick().await;
-            // draft.send(&*token).await?;
-            println!("{:?}", draft);
-            self.counter += 1;
-        }
-        // Ok(())
-    }
-}
-
 impl Default for Tweet {
     fn default() -> Self {
         Self {
@@ -81,7 +56,7 @@ impl FromRedisValue for Tweet {
     fn from_redis_value(v: &redis::Value) -> redis::RedisResult<Self> {
         match v {
             redis::Value::Data(data) => {
-                let result : Self = serde_json::from_slice(data).unwrap();
+                let result: Self = serde_json::from_slice(data).unwrap();
                 Ok(result)
             }
             _ => unimplemented!("{:?}", v),
@@ -89,6 +64,6 @@ impl FromRedisValue for Tweet {
     }
 }
 
-fn default_counter() -> u64 {
+const fn default_counter() -> u64 {
     0
 }

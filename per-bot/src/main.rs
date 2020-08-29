@@ -1,16 +1,19 @@
 mod auth;
 mod error;
+mod handlers;
 mod opts;
 mod tweets;
 
 use std::collections::HashSet;
 use std::sync::Arc;
+use std::sync::mpsc::{channel, Receiver, Sender};
 
 use anyhow::{Context, Result};
 use auth::AuthConfig;
 use clap::Clap;
 use egg_mode::auth::Token;
 use error::BotError;
+use handlers::tweet::TweetHandler;
 use opts::*;
 use redis::AsyncCommands;
 use tweets::{Tweet, TweetList};
@@ -70,17 +73,27 @@ async fn update_redis(opts: &Options) -> Result<()> {
 
 async fn init(token: Token, tweets: Vec<Tweet>) -> Result<()> {
     let token = Arc::new(token);
-    let mut handlers = Vec::new();
-    for mut t in tweets {
-        let arc_tok = Arc::clone(&token);
-        handlers.push(tokio::spawn(async move {
-            let _ = t.send(arc_tok).await;
+    let mut tweet_handlers = Vec::with_capacity(tweets.len());
+    // let mut redis_handlers = Vec::with_capacity(tweets.len());
+
+    for tweet in tweets {
+        let mut tweet_handler = TweetHandler::new(&token, tweet);
+        tweet_handlers.push(tokio::spawn(async move {
+            tweet_handler.send().await.unwrap();
         }));
     }
 
-    for h in handlers {
+    for h in tweet_handlers {
         h.await?;
     }
 
     Ok(())
 }
+
+// async fn poll_redis(tx: Sender<Tweet>) -> Result<()> {
+//     let client = redis::Client::open("redis://0.0.0.0:6379")?;
+//     let mut con = client.get_async_connection().await?;
+//     loop {
+//         redis::cmd("JSON.GET").arg()
+//     }
+// }
