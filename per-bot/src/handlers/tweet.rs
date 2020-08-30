@@ -1,6 +1,7 @@
-use std::sync::Arc;
-
 use crate::tweets::Tweet;
+
+use std::sync::Arc;
+use tokio::sync::mpsc::Sender;
 
 use egg_mode::auth::Token;
 use egg_mode::tweet::DraftTweet;
@@ -10,13 +11,15 @@ use tokio::time::{interval, Duration};
 pub struct TweetHandler {
     token: Arc<Token>,
     tweet: Tweet,
+    tx: Sender<u64>
 }
 
 impl TweetHandler {
-    pub fn new(token: &Arc<Token>, tweet: Tweet) -> Self {
+    pub fn new(token: &Arc<Token>, tweet: Tweet, tx: Sender<u64>) -> Self {
         Self {
             token: Arc::clone(token),
             tweet,
+            tx
         }
     }
 
@@ -32,6 +35,7 @@ impl TweetHandler {
             // draft.send(&self.token).await?;
             println!("{:?}", draft);
             self.tweet.counter += 1;
+            self.tx.send(self.tweet.counter).await.unwrap();
         }
     }
 }

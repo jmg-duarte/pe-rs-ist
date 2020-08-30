@@ -6,7 +6,7 @@ mod tweets;
 
 use std::collections::HashSet;
 use std::sync::Arc;
-use std::sync::mpsc::{channel, Receiver, Sender};
+use tokio::sync::mpsc::{channel, Receiver, Sender};
 
 use anyhow::{Context, Result};
 use auth::AuthConfig;
@@ -80,15 +80,14 @@ async fn init(token: Token, tweets: Vec<Tweet>) -> Result<()> {
     let client = redis::Client::open("redis://0.0.0.0:6379")?;
 
     for tweet in tweets {
-        let mut tweet_handler = TweetHandler::new(&token, tweet.clone());
+        let (tx, rx) = channel::<u64>(5);
+        let mut tweet_handler = TweetHandler::new(&token, tweet.clone(), tx);
         tweet_handlers.push(tokio::spawn(async move {
             tweet_handler.send().await.unwrap();
         }));
 
-        let mut redis_handler = RedisHandler::new(tweet.id, client.get_async_connection().await?);
-        redis_handlers.push(tokio::spawn(async move{
-            redis_handler.poll().await.unwrap();
-        }))
+        let redis_handler = RedisHandler::new(tweet.id, client.get_async_connection().await?, rx);
+        redis_handlers.push(redis_handler.run());
     }
 
     for h in tweet_handlers {
