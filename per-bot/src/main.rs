@@ -13,8 +13,8 @@ use auth::AuthConfig;
 use clap::Clap;
 use egg_mode::auth::Token;
 use error::BotError;
-use handlers::tweet::TweetHandler;
 use handlers::redis::RedisHandler;
+use handlers::tweet::TweetHandler;
 use opts::*;
 use redis::AsyncCommands;
 use tweets::{Tweet, TweetList};
@@ -80,13 +80,20 @@ async fn init(token: Token, tweets: Vec<Tweet>) -> Result<()> {
     let client = redis::Client::open("redis://0.0.0.0:6379")?;
 
     for tweet in tweets {
-        let (tx, rx) = channel::<u64>(5);
-        let mut tweet_handler = TweetHandler::new(&token, tweet.clone(), tx);
+        let (counter_tx, counter_rx) = channel::<u64>(5);
+        let (message_tx, message_rx) = channel::<String>(5);
+
+        let mut tweet_handler = TweetHandler::new(&token, tweet.clone(), counter_tx, message_rx);
         tweet_handlers.push(tokio::spawn(async move {
             tweet_handler.send().await.unwrap();
         }));
 
-        let redis_handler = RedisHandler::new(tweet.id, client.get_async_connection().await?, rx);
+        let redis_handler = RedisHandler::new(
+            tweet.id,
+            client.get_async_connection().await?,
+            counter_rx,
+            message_tx,
+        );
         redis_handlers.push(redis_handler.run());
     }
 
